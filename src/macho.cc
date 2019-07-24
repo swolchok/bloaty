@@ -625,8 +625,13 @@ class MachOObjectFile : public ObjectFile {
           ParseSymbols(sink->input_file().data(), nullptr, sink);
           break;
         }
+        case DataSource::kInlines: {
+          dwarf::File dwarf;
+          ReadDebugSectionsFromMachO(debug_file().file_data(), &dwarf);
+          ReadDWARFInlines(dwarf, sink, true);
+          break;
+        }
         case DataSource::kArchiveMembers:
-        case DataSource::kInlines:
         default:
           THROW("Mach-O doesn't support this data source");
       }
